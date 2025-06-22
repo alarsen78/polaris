@@ -1,0 +1,25 @@
+services:
+  auth:
+    build:
+      context: .
+      dockerfile: services/auth/Dockerfile
+    ports:
+      - "4000:4000"
+    environment:
+      - REDIS_HOST=redis
+    depends_on:
+      - redis
+  profile:
+    build:
+      context: .
+      dockerfile: services/profile/Dockerfile
+    ports:
+      - "4001:4001"
+    environment:
+      - REDIS_HOST=redis
+    depends_on:
+      - redis
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
