@@ -1,0 +1,45 @@
+GOAL                Valid for a year
+==============================================================================================================
+year                the year this goal is valid for
+goal                parent goal (optional, makes it possible to have nested goals)
+priority
+title               a short one-line title
+description         optional, longer description supporting the title
+deadline            when this goal should be achieved                               (must be within the year)
+completed           when this goal was completed
+abandoned           when this goal was abandoned
+reflection          reflections on the goal
+
+
+ACTIVITY            Supports a goal
+==============================================================================================================
+goal                the goal this activity supports
+month               the month to do this activity                               (must be before goal deadline)
+title               a short one-line title
+description         optional, longer description supporting the title
+deadline            when this activity should be completed                          (must be within the month)
+completed           when this activity was completed
+abandoned           when this activity was abandoned
+reflection          optional, reflections on the activity
+
+
+TASK                An activity can be broken down into multiple smaller tasks
+==============================================================================================================
+activity            the activity this task supports
+title               a short one-line title
+description         optional, longer description supporting the title
+deadline            when this task must be done (must be a day in the month/year)
+completed           when this task was completed
+abandoned           when this task was abandoned
+reflection          optional, reflections on the activity
+
+
+JOURNAL             Journal entry for a day                  (can be associated with a task, activity or goal)
+==============================================================================================================
+time                day and time, when the journal entry was created
+location            where in the world it was created from
+title               optional, a short one-line title
+reflection          optional, reflections
+task                optional, the task this is relevant for
+activity            optional, the activity this is relevant for
+goal                optional, the goal this is relevant for
