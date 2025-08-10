@@ -19,6 +19,16 @@ services:
       - REDIS_HOST=redis
     depends_on:
       - redis
+  journal:
+    build:
+      context: .
+      dockerfile: services/journal/Dockerfile
+    ports:
+      - "4002:4002"
+    environment:
+      - REDIS_HOST=redis
+    depends_on:
+      - redis
   redis:
     image: redis:7
     ports:

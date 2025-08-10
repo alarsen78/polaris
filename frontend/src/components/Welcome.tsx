@@ -39,13 +39,13 @@ const Welcome: React.FC = () => {
       <div className={styles.container}>
         <div className={styles.greeting}>Welcome, {fullName}!</div>
         <div className={styles.subtext}>
-          <p>You&apos;re now logged in. Enjoy your stay.</p>
+          <p>You&apos;re now logged in and ready to change your life!</p>
         </div>
-      </div>
-      <div>
-        <button className={styles.button} onClick={logout}>
-          Logout
-        </button>
+        <div>
+          <button className={styles.button} onClick={logout}>
+            Logout
+          </button>
+        </div>
       </div>
     </>
   );

@@ -8,8 +8,10 @@
     "stop:docker": "docker-compose down",
     "start:auth": "ts-node services/auth/auth-service.ts",
     "start:profile": "ts-node services/profile/profile-service.ts",
+    "start:journal": "ts-node services/journal/journal-service.ts",
     "dev:auth": "nodemon --exec \"node --loader ts-node/esm --experimental-specifier-resolution=node --no-warnings\" services/auth/auth-service.ts",
     "dev:profile": "nodemon --exec \"node --loader ts-node/esm --experimental-specifier-resolution=node --no-warnings\" services/profile/profile-service.ts",
+    "dev:journal": "nodemon --exec \"node --loader ts-node/esm --experimental-specifier-resolution=node --no-warnings\" services/journal/journal-service.ts",
     "lint": "eslint .",
     "format": "prettier --write \"**/*.{js,ts,tsx,json,md,css,html}\""
   },

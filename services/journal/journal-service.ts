@@ -2,9 +2,8 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import { userProfileMap } from './profile-store';
-import { ProfileResponse } from 'shared/types/api';
 import { createClient } from 'redis';
+import { JournalResponse } from 'shared/types/api';
 
 const app = express();
 app.use(cors());
@@ -20,7 +19,7 @@ redis
   .then(() => console.log('Connected to Redis'))
   .catch(console.error);
 
-app.get('/profile', async (req, res) => {
+app.get('/journal', async (req, res) => {
   const userId = req.query.userId as string;
   const token = req.query.token as string;
 
@@ -29,13 +28,19 @@ app.get('/profile', async (req, res) => {
     return res.status(403).json({ error: 'Unauthorized access' });
   }
 
-  const userProfile = userProfileMap.get(userId);
-  const response: ProfileResponse = {
-    fullName: userProfile ? userProfile.fullName : 'Unknown User',
+  const response: JournalResponse = {
+    journals: [
+      {
+        id: '1',
+        date: new Date().toISOString(),
+        content: 'Sample journal entry',
+      },
+      { id: '2', date: new Date().toISOString(), content: 'Another entry' },
+    ],
   };
   return res.json(response);
 });
 
-app.listen(4001, () => {
-  console.log('Profile service running on http://localhost:4001');
+app.listen(4002, () => {
+  console.log('Profile service running on http://localhost:4002');
 });

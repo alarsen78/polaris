@@ -17,7 +17,7 @@ body {
   min-height: 100vh;
   min-width: 320px;
   margin: 0;
-  display: flex;
+  display: flow;
   align-items: center; /* Vertical centering */
   justify-content: center; /* Horizontal centering */
   background-color: #f3f4f6;

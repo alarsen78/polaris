@@ -18,3 +18,18 @@ export type ProfileRequest = {
 export type ProfileResponse = {
   fullName: string;
 };
+
+export type JournalRequest = {
+  userId: string;
+  token: string;
+};
+
+export type JournalEntry = {
+  id: string;
+  date: string;
+  content: string;
+};
+
+export type JournalResponse = {
+  journals: JournalEntry[];
+};
