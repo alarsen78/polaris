@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {
+  AddJournalPayload,
   AuthRequest,
   AuthResponse,
   JournalRequest,
@@ -37,4 +38,8 @@ export async function getJournal(
     { params: data }
   );
   return res.data;
+}
+
+export async function addJournalEntry(data: AddJournalPayload): Promise<void> {
+  await axios.post('http://localhost:4002/journal', data);
 }

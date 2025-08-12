@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../AuthContext';
 import { JournalRequest, JournalEntry } from 'shared/types/api';
 import styles from './Journal.module.css';
-import { getJournal } from '../api/client';
+import { getJournal, addJournalEntry } from '../api/client';
 
 const Journal: React.FC = () => {
   const { userId, token } = useAuth();
@@ -37,6 +37,58 @@ const Journal: React.FC = () => {
   return (
     <>
       <div className={styles.container}>
+        <div>
+          <h1 className={styles.title}>Your Journal</h1>
+          <p className={styles.description}>
+            Here you can view your journal entries and add more.
+          </p>
+        </div>
+        <div>
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              const form = e.target as HTMLFormElement;
+              const textarea = form.elements.namedItem(
+                'entry'
+              ) as HTMLTextAreaElement;
+              const content = textarea.value.trim();
+              if (!content) return;
+
+              await addJournalEntry({
+                request: { userId, token },
+                entry: {
+                  id: '',
+                  date: new Date().toISOString(),
+                  content,
+                },
+              });
+
+              textarea.value = '';
+
+              // Reload journal after successful submission
+              try {
+                const res = await getJournal({
+                  userId,
+                  token,
+                } as JournalRequest);
+                setJournal(res.journals);
+              } catch {
+                setError('Failed to reload journal');
+              }
+            }}
+            className={styles.form}
+          >
+            <textarea
+              name="entry"
+              placeholder="Write your journal entry..."
+              className={styles.textarea}
+              rows={8}
+            />
+            <button type="submit" className={styles.button}>
+              Add Entry
+            </button>
+          </form>
+        </div>
         <div className={styles.greeting}>Journal entries</div>
         <ul className={styles.journalList}>
           {journal.map((entry) => (

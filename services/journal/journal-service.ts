@@ -4,6 +4,8 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import { createClient } from 'redis';
 import { JournalResponse } from 'shared/types/api';
+import { journalMap } from './journal-store';
+import { randomUUID } from 'crypto';
 
 const app = express();
 app.use(cors());
@@ -29,16 +31,29 @@ app.get('/journal', async (req, res) => {
   }
 
   const response: JournalResponse = {
-    journals: [
-      {
-        id: '1',
-        date: new Date().toISOString(),
-        content: 'Sample journal entry',
-      },
-      { id: '2', date: new Date().toISOString(), content: 'Another entry' },
-    ],
+    journals: journalMap.get(userId) || [],
   };
   return res.json(response);
+});
+
+app.post('/journal', async (req, res) => {
+  const { request, entry } = req.body;
+  const { userId, token } = request;
+
+  const storedUserId = await redis.get(token);
+  if (!storedUserId || storedUserId !== userId) {
+    return res.status(403).json({ error: 'Unauthorized access' });
+  }
+
+  if (!journalMap.has(userId)) {
+    journalMap.set(userId, []);
+  }
+
+  const userJournal = journalMap.get(userId);
+  entry.id = randomUUID();
+  userJournal?.push(entry);
+
+  return res.status(201).json({ message: 'Journal entry added successfully' });
 });
 
 app.listen(4002, () => {

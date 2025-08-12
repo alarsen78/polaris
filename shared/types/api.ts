@@ -33,3 +33,8 @@ export type JournalEntry = {
 export type JournalResponse = {
   journals: JournalEntry[];
 };
+
+export type AddJournalPayload = {
+  request: JournalRequest;
+  entry: JournalEntry;
+};
