@@ -2,7 +2,7 @@ import { JournalEntry } from 'shared/types/api';
 
 export const journalMap: Map<string, JournalEntry[]> = new Map([
   [
-    '65b612d6-099c-4ec5-ba55-cb5cff969470',
+    '221e6381-89b0-4d71-ad3d-17980a2f0cdf',
     [
       {
         id: '94b9a6c3-6b6a-4840-83ed-46a977c4c596',

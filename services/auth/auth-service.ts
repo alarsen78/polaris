@@ -2,7 +2,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import { userMap } from './user-store';
+import { getUserId } from './user-store';
 import { AuthRequest, AuthResponse } from 'shared/types/api';
 import { createClient } from 'redis';
 import crypto from 'crypto';
@@ -22,9 +22,10 @@ app.use(bodyParser.json());
 
 app.post('/auth', async (req, res) => {
   const { username, password } = req.body as AuthRequest;
-  const userRecord = userMap.get(username);
 
-  if (userRecord && userRecord.password === password) {
+  const userRecord = await getUserId(username, password);
+
+  if (userRecord && userRecord.userId) {
     const token = crypto.randomBytes(32).toString('hex');
 
     await redis.set(token, userRecord.userId, { EX: 3600 });

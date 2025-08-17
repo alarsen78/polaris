@@ -1,25 +1,37 @@
-// user-store.ts
+import { Pool } from 'pg';
+import argon2 from 'argon2';
 
 type UserRecord = {
   userId: string;
-  password: string;
 };
 
-export const userMap: Map<string, UserRecord> = new Map([
-  [
-    'larand78@gmail.com',
-    { userId: '65b612d6-099c-4ec5-ba55-cb5cff969470', password: 'admin' },
-  ],
-  [
-    'alice@example.com',
-    { userId: '1d6f3f94-9c18-4b85-bdcd-1a2d0f9e4321', password: 'password123' },
-  ],
-  [
-    'bob@example.com',
-    { userId: '2b1a7f14-4c3b-4329-8184-77e9b95a7b33', password: 'password123' },
-  ],
-  [
-    'charlie@example.com',
-    { userId: '3e4e1836-24c4-4e2f-b7a7-d6810f5be5de', password: 'password123' },
-  ],
-]);
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
+
+export async function getUserId(
+  email: string,
+  password: string
+): Promise<UserRecord | null> {
+  const normalizedEmail = email.trim();
+
+  try {
+    const res = await pool.query(
+      'SELECT user_id, password_hash FROM auth.users WHERE email = $1',
+      [normalizedEmail]
+    );
+
+    if (res.rows.length === 0) return null;
+
+    const row = res.rows[0] as { user_id: string; password_hash: string };
+
+    const ok = await argon2.verify(row.password_hash, password);
+
+    if (!ok) return null;
+
+    return { userId: row.user_id } as UserRecord;
+  } catch (error) {
+    console.error('Error querying user:', error);
+    return null;
+  }
+}
