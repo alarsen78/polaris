@@ -18,6 +18,7 @@ services:
       - "4001:4001"
     environment:
       - REDIS_HOST=redis
+      - DATABASE_URL=${PROFILE_DATABASE_URL}
     depends_on:
       - redis
   journal:

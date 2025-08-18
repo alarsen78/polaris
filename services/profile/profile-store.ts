@@ -1,12 +1,34 @@
 // user-store.ts
+import { Pool } from 'pg';
 
 type UserProfileRecord = {
+  profileId: string;
   fullName: string;
 };
 
-export const userProfileMap: Map<string, UserProfileRecord> = new Map([
-  ['221e6381-89b0-4d71-ad3d-17980a2f0cdf', { fullName: 'Anders Larsen' }],
-  ['1d6f3f94-9c18-4b85-bdcd-1a2d0f9e4321', { fullName: 'Alice Anderson' }],
-  ['2b1a7f14-4c3b-4329-8184-77e9b95a7b33', { fullName: 'Bob Alison' }],
-  ['3e4e1836-24c4-4e2f-b7a7-d6810f5be5de', { fullName: 'Charlie Bobson' }],
-]);
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
+
+export async function getUserProfile(
+  userId: string
+): Promise<UserProfileRecord | null> {
+  try {
+    const res = await pool.query(
+      'SELECT profile_id, full_name FROM profile.profile WHERE user_id = $1',
+      [userId]
+    );
+
+    if (res.rows.length === 0) return null;
+
+    const row = res.rows[0] as { profile_id: string; full_name: string };
+
+    return {
+      profileId: row.profile_id,
+      fullName: row.full_name,
+    } as UserProfileRecord;
+  } catch (error) {
+    console.error('Error querying user profile:', error);
+    return null;
+  }
+}

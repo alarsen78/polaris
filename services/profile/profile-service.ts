@@ -2,7 +2,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import { userProfileMap } from './profile-store';
+import { getUserProfile } from './profile-store';
 import { ProfileResponse } from 'shared/types/api';
 import { createClient } from 'redis';
 
@@ -29,7 +29,7 @@ app.get('/profile', async (req, res) => {
     return res.status(403).json({ error: 'Unauthorized access' });
   }
 
-  const userProfile = userProfileMap.get(userId);
+  const userProfile = await getUserProfile(userId);
   const response: ProfileResponse = {
     fullName: userProfile ? userProfile.fullName : 'Unknown User',
   };
