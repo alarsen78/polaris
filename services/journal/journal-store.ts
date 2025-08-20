@@ -1,19 +1,43 @@
 import { JournalEntry } from 'shared/types/api';
+import { Pool } from 'pg';
 
-export const journalMap: Map<string, JournalEntry[]> = new Map([
-  [
-    '221e6381-89b0-4d71-ad3d-17980a2f0cdf',
-    [
-      {
-        id: '94b9a6c3-6b6a-4840-83ed-46a977c4c596',
-        date: '2025-08-10T12:00:00Z',
-        content: 'First journal entry',
-      },
-      {
-        id: '74a82135-baf1-43bc-8443-c328579b230a',
-        date: '2025-08-12T12:00:00Z',
-        content: 'Second journal entry',
-      },
-    ],
-  ],
-]);
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
+
+export async function getEntriesByUser(
+  userId: string
+): Promise<JournalEntry[] | null> {
+  try {
+    const res = await pool.query(
+      'SELECT entry_id, content, updated_at FROM journal.entry WHERE user_id = $1',
+      [userId]
+    );
+
+    if (res.rows.length === 0) return null;
+
+    return res.rows.map((row) => ({
+      id: row.entry_id,
+      date: row.updated_at,
+      content: row.content,
+    })) as JournalEntry[];
+  } catch (error) {
+    console.error('Error querying user profile:', error);
+    return null;
+  }
+}
+
+export async function addEntry(
+  userId: string,
+  entry: JournalEntry
+): Promise<void> {
+  try {
+    await pool.query(
+      'INSERT INTO journal.entry (user_id, content) VALUES ($1, $2)',
+      [userId, entry.content]
+    );
+  } catch (error) {
+    console.error('Error adding journal entry:', error);
+    throw error;
+  }
+}

@@ -4,8 +4,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import { createClient } from 'redis';
 import { JournalResponse } from 'shared/types/api';
-import { journalMap } from './journal-store';
-import { randomUUID } from 'crypto';
+import { addEntry, getEntriesByUser } from './journal-store';
 
 const app = express();
 app.use(cors());
@@ -31,7 +30,7 @@ app.get('/journal', async (req, res) => {
   }
 
   const response: JournalResponse = {
-    journals: journalMap.get(userId) || [],
+    journals: (await getEntriesByUser(userId)) || [],
   };
   return res.json(response);
 });
@@ -45,13 +44,10 @@ app.post('/journal', async (req, res) => {
     return res.status(403).json({ error: 'Unauthorized access' });
   }
 
-  if (!journalMap.has(userId)) {
-    journalMap.set(userId, []);
-  }
-
-  const userJournal = journalMap.get(userId);
-  entry.id = randomUUID();
-  userJournal?.push(entry);
+  addEntry(userId, entry).catch((error) => {
+    console.error('Error adding entry:', error);
+    return res.status(500).json({ error: 'Failed to add journal entry' });
+  });
 
   return res.status(201).json({ message: 'Journal entry added successfully' });
 });
